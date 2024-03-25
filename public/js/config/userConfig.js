@@ -205,46 +205,58 @@ const deleteUser = async (id) => {
     event.preventDefault();
     // Muestra un mensaje de carga mientras se procesa la eliminación
     Swal.fire({
-        title: 'Borrando usuario',
-        text: 'Espera un momento por favor...',
-        didOpen: () => Swal.showLoading()
-    });
-    const url = route('user.destroy', id);
-    const init = setMethodHeaders('DELETE');
-    try {
-        const response = await fetch(url, init);
-
-        if (response.ok) {
-            // Usuario eliminado correctamente
+        title: "¿Desea eliminar este usuario?",
+        showCancelButton: true,
+        confirmButtonText: "Eliminar",
+        cancelButtonText: "Cancelar",
+        confirmButtonColor: "red",
+        icon: 'warning'
+    }).then(async(result) => {
+        /* Read more about isConfirmed, isDenied below */
+        if (result.isConfirmed) {
             Swal.fire({
-                title: 'Usuario eliminado',
-                text: 'El usuario se ha eliminado correctamente.',
-                icon: 'success',
-                confirmButtonColor: "#145A32",
-                confirmButtonText: "Aceptar",
+                title: 'Borrando usuario',
+                text: 'Espera un momento por favor...',
+                didOpen: () => Swal.showLoading()
             });
+            const url = route('user.destroy', id);
+            const init = setMethodHeaders('DELETE');
+            try {
+                const response = await fetch(url, init);
 
-            userDT.ajax.reload();
-        } else {
-            // Error al eliminar usuario
-            const errorData = await response.json();
-            Swal.fire({
-                title: 'Error al eliminar usuario',
-                text: errorData.error || 'Hubo un problema al procesar la solicitud.',
-                icon: 'error',
-                confirmButtonColor: "#145A32",
-                confirmButtonText: "Aceptar",
-            });
+                if (response.ok) {
+                    // Usuario eliminado correctamente
+                    Swal.fire({
+                        title: 'Usuario eliminado',
+                        text: 'El usuario se ha eliminado correctamente.',
+                        icon: 'success',
+                        confirmButtonColor: "#145A32",
+                        confirmButtonText: "Aceptar",
+                    });
+
+                    userDT.ajax.reload();
+                } else {
+                    // Error al eliminar usuario
+                    const errorData = await response.json();
+                    Swal.fire({
+                        title: 'Error al eliminar usuario',
+                        text: errorData.error || 'Hubo un problema al procesar la solicitud.',
+                        icon: 'error',
+                        confirmButtonColor: "#145A32",
+                        confirmButtonText: "Aceptar",
+                    });
+                }
+            } catch (error) {
+                // Error de red u otra excepción
+                console.error('Error al realizar la solicitud:', error);
+                Swal.fire({
+                    title: 'Error de red',
+                    text: 'Hubo un problema al comunicarse con el servidor.',
+                    icon: 'error',
+                    confirmButtonColor: "#145A32",
+                    confirmButtonText: "Aceptar",
+                });
+            }
         }
-    } catch (error) {
-        // Error de red u otra excepción
-        console.error('Error al realizar la solicitud:', error);
-        Swal.fire({
-            title: 'Error de red',
-            text: 'Hubo un problema al comunicarse con el servidor.',
-            icon: 'error',
-            confirmButtonColor: "#145A32",
-            confirmButtonText: "Aceptar",
-        });
-    }
+    });
 };

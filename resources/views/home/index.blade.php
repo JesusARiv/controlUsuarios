@@ -30,9 +30,9 @@
                                     <span class="input-group-text">Tipo usuario</span>
                                     <select class="form-select" id="user_type">
                                         <option value="" selected>Seleccione</option>
-                                        {{-- @foreach ($userType as $type)
+                                        @foreach ($userType as $type)
                                             <option value="{{ $type->id }}">{{ $type->type }}</option>
-                                        @endforeach --}}
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
